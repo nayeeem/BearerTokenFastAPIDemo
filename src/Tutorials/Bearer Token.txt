@@ -1,0 +1,19 @@
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+OAuth2PasswordBearer is a security class in the FastAPI framework that simplifies handling OAuth2 password-based authentication. It automatically looks for a Bearer token in the Authorization header and adds a security scheme to the automatic API documentation. While it extracts the token, it is up to you to write the dependency logic to verify the token against your backend. 
+
+OAuth2PasswordBearer is a tool for convenience in FastAPI. It handles the common task of extracting a Bearer token from a request's Authorization header and makes the documentation for password-based flows user-friendly. However, your application is still responsible for the actual verification and security checks of that token. 
+
+How it works:
+
+Declaration: You instantiate it and pass the tokenUrl argument, which is the URL clients will use to get a token, typically by sending username and password.
+
+Dependency: You declare a dependency using Depends(oauth2_scheme) in your route functions. FastAPI will automatically handle the Authorization: Bearer <token> header for you.
+
+Security Scheme: OAuth2PasswordBearer is used to define a security scheme in the OpenAPI schema and the automatic documentation UI, where users can log in with username and password to get a token.
+
+Token Verification: The OAuth2PasswordBearer class itself does not verify the token. That verification step must be done separately within the dependency function, for example, by checking the token against a database or a public key.
+
+tokenUrl: This parameter is used by the documentation UI to show the user where to send their credentials to get a token. It's not used by OAuth2PasswordBearer itself for getting the token, but for documenting the process. 
+
