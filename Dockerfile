@@ -1,23 +1,18 @@
-# For more information, please refer to https://aka.ms/vscode-docker-python
-FROM python:3-slim
+    # Use a base Python image
+    FROM python:3.9-slim-buster
 
-# Keeps Python from generating .pyc files in the container
-ENV PYTHONDONTWRITEBYTECODE=1
+    # Set the working directory inside the container
+    WORKDIR /code
 
-# Turns off buffering for easier container logging
-ENV PYTHONUNBUFFERED=1
+    # Copy the requirements file and install dependencies
+    COPY ./requirements.txt /code/requirements.txt
+    RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
 
-# Install pip requirements
-COPY requirements.txt .
-RUN python -m pip install -r requirements.txt
+    # Copy your application code
+    COPY ./app /code/app
 
-WORKDIR /app
-COPY . /app
+    # Expose the port your FastAPI app listens on (default is 8000 for Uvicorn)
+    EXPOSE 8000
 
-# Creates a non-root user with an explicit UID and adds permission to access the /app folder
-# For more info, please refer to https://aka.ms/vscode-docker-python-configure-containers
-RUN adduser -u 5678 --disabled-password --gecos "" appuser && chown -R appuser /app
-USER appuser
-
-# During debugging, this entry point will be overridden. For more information, please refer to https://aka.ms/vscode-docker-python-debug
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+    # Command to run your FastAPI application with Uvicorn
+    CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
